@@ -5,17 +5,25 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import commonStyles from '../commonStyles';
 
 export default props => {
+  /**
+   * Verificando se a tarefa está concluída e se estiver
+   * vai passar um linha cortando o texto (line-through)
+   */
+  const doneOrNotStyle =
+    props.doneAt != null ? {textDecorationLine: 'line-through'} : {};
+
   return (
     <View style={styles.container}>
       <View style={styles.checkContainer}>{getCheckView(props.doneAt)}</View>
       <View>
-        <Text>{props.desc}</Text>
+        <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
         <Text>{props.estimateAt + ''}</Text>
       </View>
     </View>
   );
 };
 
+// verificando se está concluido ou pendente
 function getCheckView(doneAt) {
   if (doneAt != null) {
     return (
@@ -56,5 +64,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#4D7031',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  desc: {
+    fontFamily: commonStyles.fontFamily,
+    color: commonStyles.colors.mainText,
+    fontSize: 15,
   },
 });
