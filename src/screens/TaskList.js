@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, ImageBackground, StyleSheet} from 'react-native';
+import {View, Text, ImageBackground, StyleSheet, FlatList} from 'react-native';
 
 import commonStyles from '../commonStyles';
 import todayImage from '../../assets/assets/imgs/today.jpg';
@@ -12,6 +12,23 @@ import Task from '../components/Task';
 
 // Componente em classe
 export default class TaskList extends Component {
+  //criando um estado para criar a funcionalidade do scroll
+  state = {
+    tasks: [
+      {
+        id: Math.random(),
+        desc: 'Comprar livro de React Native',
+        estimateAt: new Date(),
+        doneAt: new Date(),
+      },
+      {
+        id: Math.random(),
+        desc: 'Comprar livro de React Native',
+        estimateAt: new Date(),
+        doneAt: null,
+      },
+    ],
+  };
   render() {
     const today = moment()
       .locale('pt-br')
@@ -27,13 +44,12 @@ export default class TaskList extends Component {
         </ImageBackground>
 
         <View style={styles.taskList}>
-          <Task
-            desc="Comprar Livro"
-            estimateAt={new Date()}
-            doneAt={new Date()}
+          {/* Pegando o estado pelo FlatListe jogando na task */}
+          <FlatList
+            data={this.state.tasks}
+            keyExtractor={item => `${item.id}`}
+            renderItem={({item}) => <Task {...item} />}
           />
-
-          <Task desc="Ler Livro" estimateAt={new Date()} doneAt={null} />
         </View>
       </View>
     );
