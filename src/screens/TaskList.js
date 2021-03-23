@@ -34,6 +34,42 @@ export default class TaskList extends Component {
           />
 
           <Task desc="Ler Livro" estimateAt={new Date()} doneAt={null} />
+
+          <Task
+            desc="Comprar Livro"
+            estimateAt={new Date()}
+            doneAt={new Date()}
+          />
+
+          <Task desc="Ler Livro" estimateAt={new Date()} doneAt={null} />
+          <Task
+            desc="Comprar Livro"
+            estimateAt={new Date()}
+            doneAt={new Date()}
+          />
+
+          <Task desc="Ler Livro" estimateAt={new Date()} doneAt={null} />
+          <Task
+            desc="Comprar Livro"
+            estimateAt={new Date()}
+            doneAt={new Date()}
+          />
+
+          <Task desc="Ler Livro" estimateAt={new Date()} doneAt={null} />
+          <Task
+            desc="Comprar Livro"
+            estimateAt={new Date()}
+            doneAt={new Date()}
+          />
+
+          <Task desc="Ler Livro" estimateAt={new Date()} doneAt={null} />
+          <Task
+            desc="Comprar Livro"
+            estimateAt={new Date()}
+            doneAt={new Date()}
+          />
+
+          <Task desc="Ler Livro" estimateAt={new Date()} doneAt={null} />
         </View>
       </View>
     );
