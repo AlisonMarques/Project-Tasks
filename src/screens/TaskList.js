@@ -1,5 +1,15 @@
-import React, {Component} from 'react';
-import {View, Text, ImageBackground, StyleSheet, FlatList} from 'react-native';
+import React, { Component } from 'react';
+import {
+  View,
+  Text,
+  ImageBackground,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import commonStyles from '../commonStyles';
 import todayImage from '../../assets/assets/imgs/today.jpg';
@@ -9,11 +19,15 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 
 import Task from '../components/Task';
+import AddTask from './AddTask';
 
 // Componente em classe
 export default class TaskList extends Component {
   //criando um estado para criar a funcionalidade do scroll
   state = {
+    showDoneTasks: true,
+    showAddTask: true,
+    visibleTasks: [],
     tasks: [
       {
         id: Math.random(),
@@ -29,6 +43,42 @@ export default class TaskList extends Component {
       },
     ],
   };
+
+  componentDidMount = () => {
+    this.filterTasks();
+  };
+
+  // Botão para filtar tarefa.
+  toggleFilter = () => {
+    this.setState(
+      { showDoneTasks: !this.state.showDoneTasks },
+      this.filterTasks,
+    );
+  };
+
+  // Filtrando tarefas pendentes e sumindo as tarefas concluídas.
+  filterTasks = () => {
+    let visibleTasks = null;
+    if (this.state.showDoneTasks) {
+      visibleTasks = [...this.state.tasks];
+    } else {
+      const pending = task => task.doneAt === null;
+      visibleTasks = this.state.tasks.filter(pending);
+    }
+    this.setState({ visibleTasks });
+  };
+
+  //Alterando o estado da tarefa através do clique.
+  toggleTask = taskId => {
+    const tasks = [...this.state.tasks];
+    tasks.forEach(task => {
+      if (task.id === taskId) {
+        task.doneAt = task.doneAt ? null : new Date();
+      }
+    });
+    this.setState({ tasks }, this.filterTasks);
+  };
+
   render() {
     const today = moment()
       .locale('pt-br')
@@ -36,7 +86,20 @@ export default class TaskList extends Component {
 
     return (
       <View style={styles.container}>
+        <AddTask
+          isVisible={this.state.showAddTask}
+          onCancel={() => this.setState({ showAddTask: false })}
+        />
         <ImageBackground source={todayImage} style={styles.background}>
+          <View style={styles.iconBar}>
+            <TouchableOpacity onPress={this.toggleFilter}>
+              <Icon
+                name={this.state.showDoneTasks ? 'eye' : 'eye-slash'}
+                size={20}
+                color={commonStyles.colors.secondary}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={styles.titleBar}>
             <Text style={styles.title}>Hoje</Text>
             <Text style={styles.subtitle}>{today}</Text>
@@ -46,9 +109,11 @@ export default class TaskList extends Component {
         <View style={styles.taskList}>
           {/* Pegando o estado pelo FlatListe jogando na task */}
           <FlatList
-            data={this.state.tasks}
+            data={this.state.visibleTasks}
             keyExtractor={item => `${item.id}`}
-            renderItem={({item}) => <Task {...item} />}
+            renderItem={({ item }) => (
+              <Task {...item} toggleTask={this.toggleTask} />
+            )}
           />
         </View>
       </View>
@@ -86,5 +151,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 20,
     marginBottom: 30,
+  },
+  iconBar: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    justifyContent: 'flex-end',
+    marginTop: Platform.OS === 'ios' ? 40 : 10,
   },
 });
