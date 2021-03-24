@@ -25,6 +25,7 @@ export default class TaskList extends Component {
   //criando um estado para criar a funcionalidade do scroll
   state = {
     showDoneTasks: true,
+    visibleTasks: [],
     tasks: [
       {
         id: Math.random(),
@@ -41,9 +42,28 @@ export default class TaskList extends Component {
     ],
   };
 
-  // alterando o olho de visualização da tarefa
+  componentDidMount = () => {
+    this.filterTasks();
+  };
+
+  // Botão para filtar tarefa.
   toggleFilter = () => {
-    this.setState({ showDoneTasks: !this.state.showDoneTasks });
+    this.setState(
+      { showDoneTasks: !this.state.showDoneTasks },
+      this.filterTasks,
+    );
+  };
+
+  // Filtrando tarefas pendentes e sumindo as tarefas concluídas.
+  filterTasks = () => {
+    let visibleTasks = null;
+    if (this.state.showDoneTasks) {
+      visibleTasks = [...this.state.tasks];
+    } else {
+      const pending = task => task.doneAt === null;
+      visibleTasks = this.state.tasks.filter(pending);
+    }
+    this.setState({ visibleTasks });
   };
 
   //Alterando o estado da tarefa através do clique.
@@ -54,7 +74,7 @@ export default class TaskList extends Component {
         task.doneAt = task.doneAt ? null : new Date();
       }
     });
-    this.setState({ tasks });
+    this.setState({ tasks }, this.filterTasks);
   };
 
   render() {
@@ -83,7 +103,7 @@ export default class TaskList extends Component {
         <View style={styles.taskList}>
           {/* Pegando o estado pelo FlatListe jogando na task */}
           <FlatList
-            data={this.state.tasks}
+            data={this.state.visibleTasks}
             keyExtractor={item => `${item.id}`}
             renderItem={({ item }) => (
               <Task {...item} toggleTask={this.toggleTask} />
