@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Platform,
   Modal,
   View,
   Text,
@@ -9,26 +10,48 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import moment from 'moment';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import commonStyles from '../commonStyles';
 
 // é o estado que ALTERA o COMPONENTE e nao o contrário
 
-const initialState = { desc: '', date: new Date() };
+const initialState = { desc: '', date: new Date(), showDatePicker: false };
 export default class AddTask extends Component {
   state = {
     ...initialState,
   };
 
-  getDateTimePicker = () => {
-    return (
+  // chamando o calendario para o usuário selecionar a data.
+  getDatePicker = () => {
+    let datePicker = (
       <DateTimePicker
         value={this.state.date}
-        onChange={(_, date) => this.setState({ date })}
+        onChange={(_, date) => this.setState({ date, showDatePicker: false })}
         mode="date"
       />
     );
+    // gerando a data em formato de String
+    const dateString = moment(this.state.date).format(
+      'dddd, D [de] MMMM [de] YYYY',
+    );
+
+    // verificando qual plataforma está sendo aberta para ter um modal date compatível
+    if (Platform.OS === 'android') {
+      datePicker = (
+        <View>
+          <TouchableOpacity
+            onPress={() => this.setState({ showDatePicker: true })}>
+            <Text style={styles.date}>{dateString}</Text>
+          </TouchableOpacity>
+          {this.state.showDatePicker && datePicker}
+        </View>
+      );
+    }
+
+    return datePicker;
   };
 
   render() {
@@ -50,7 +73,7 @@ export default class AddTask extends Component {
             onChangeText={desc => this.setState({ desc })}
             value={this.state.desc}
           />
-          {this.getDateTimePicker()}
+          {this.getDatePicker()}
           <View style={styles.buttons}>
             <TouchableOpacity onPress={this.props.onCancel}>
               <Text style={styles.button}>Cancelar</Text>
@@ -103,5 +126,10 @@ const styles = StyleSheet.create({
     margin: 20,
     marginRight: 30,
     color: commonStyles.colors.today,
+  },
+  date: {
+    fontFamily: commonStyles.fontFamily,
+    fontSize: 20,
+    marginLeft: 15,
   },
 });
