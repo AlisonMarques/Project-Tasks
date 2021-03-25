@@ -24,6 +24,18 @@ export default class AddTask extends Component {
     ...initialState,
   };
 
+  save = () => {
+    const newTask = {
+      desc: this.state.desc,
+      date: this.state.date,
+    };
+
+    // verificando se foi passado o (this.props.onSave) para executar a função de save
+    this.props.onSave && this.props.onSave(newTask);
+    // gerando o estado da aplicação
+    this.setState({ ...initialState });
+  };
+
   // chamando o calendario para o usuário selecionar a data.
   getDatePicker = () => {
     let datePicker = (
@@ -79,7 +91,7 @@ export default class AddTask extends Component {
               <Text style={styles.button}>Cancelar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={this.save}>
               <Text style={styles.button}>Salvar</Text>
             </TouchableOpacity>
           </View>
