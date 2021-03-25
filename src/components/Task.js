@@ -30,14 +30,18 @@ export default props => {
     .locale('pt-br')
     .format('ddd, D [de] MMMM');
 
+  // criando o botão de excluir do lado direito
   const getRightContent = () => {
     return (
-      <TouchableOpacity style={styles.right}>
+      <TouchableOpacity
+        style={styles.right}
+        onPress={() => props.onDelete && props.onDelete(props.id)}>
         <Icon name="trash" size={30} color="#FFF" />
       </TouchableOpacity>
     );
   };
 
+  // criando o botão de excluir do lado esquerdo
   const getLeftContent = () => {
     return (
       <View style={styles.left}>
@@ -50,7 +54,8 @@ export default props => {
   return (
     <Swipeable
       renderRightActions={getRightContent}
-      renderLeftActions={getLeftContent}>
+      renderLeftActions={getLeftContent}
+      onSwipeableLeftOpen={() => props.onDelete && props.onDelete(props.id)}>
       <View style={styles.container}>
         <TouchableWithoutFeedback onPress={() => props.toggleTask(props.id)}>
           <View style={styles.checkContainer}>
