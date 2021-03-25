@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Platform,
+  Alert,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -79,6 +80,27 @@ export default class TaskList extends Component {
     this.setState({ tasks }, this.filterTasks);
   };
 
+  // adicionando uma tarefa no state
+  addTask = newTask => {
+    //Verificando se a descrição está vazia ou se contém apenas espaços
+    if (!newTask.desc || !newTask.desc.trim()) {
+      Alert.alert('Dados Inválidos', 'Descrição não informada!');
+      return;
+    }
+    // clonando as tarefas
+    const tasks = [...this.state.tasks];
+    // adicionando as tarefas // salvando
+    tasks.push({
+      id: Math.random(),
+      desc: newTask.desc,
+      estimateAt: newTask.date,
+      doneAt: null,
+    });
+
+    //alterando o estado para ficar salvo e chamo o filter para listar as novas tarefas
+    this.setState({ tasks, showAddTask: false }, this.filterTasks);
+  };
+
   render() {
     const today = moment()
       .locale('pt-br')
@@ -89,6 +111,7 @@ export default class TaskList extends Component {
         <AddTask
           isVisible={this.state.showAddTask}
           onCancel={() => this.setState({ showAddTask: false })}
+          onSave={this.addTask}
         />
         <ImageBackground source={todayImage} style={styles.background}>
           <View style={styles.iconBar}>
